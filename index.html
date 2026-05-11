@@ -1,96 +1,182 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>은퇴 현금흐름 계산기</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>혼자 하는 콘트랙트 브릿지 연습게임</title>
   <style>
-    * { box-sizing: border-box; }
-    body { margin:0; font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",Arial,sans-serif; background:#f4f6fb; color:#172033; line-height:1.55; }
-    header { background:linear-gradient(135deg,#111827,#1d4ed8); color:white; padding:30px 20px; }
-    .wrap { max-width:1280px; margin:0 auto; }
-    h1 { margin:0 0 8px; font-size:32px; letter-spacing:-1px; }
-    .subtitle { margin:0; color:rgba(255,255,255,.86); }
-    main { max-width:1280px; margin:20px auto 60px; padding:0 20px; }
-    .grid { display:grid; grid-template-columns:repeat(12,1fr); gap:16px; }
-    .card { grid-column:span 12; background:white; border:1px solid #e5e7eb; border-radius:18px; padding:20px; box-shadow:0 12px 30px rgba(15,23,42,.08); }
-    .third { grid-column:span 4; } .two-third{grid-column:span 8;} .half{grid-column:span 6;}
-    @media(max-width:980px){.third,.two-third,.half{grid-column:span 12;}}
-    h2 { margin:0 0 14px; font-size:20px; } h3{margin:16px 0 8px; font-size:15px;}
-    label { display:block; margin:10px 0 6px; color:#64748b; font-size:13px; font-weight:800; }
-    input,select,button{font:inherit;} input,select{width:100%; border:1px solid #dbe1ea; border-radius:12px; padding:10px 12px; outline:none; background:white;}
-    input.accounting{text-align:right;font-variant-numeric:tabular-nums;}
-    .note{background:#f8fafc;border:1px solid #e5e7eb;color:#475569;border-radius:14px;padding:13px 15px;font-size:14px;}
-    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.form-grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-    @media(max-width:760px){.form-grid,.form-grid-3{grid-template-columns:1fr;}}
-    .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px} button{border:0;border-radius:12px;padding:11px 15px;background:#2563eb;color:white;cursor:pointer;font-weight:800}button.secondary{background:#111827}button.light{background:#eef2ff;color:#1e3a8a}button.danger{background:#fee2e2;color:#dc2626}
-    .candidate-list{display:grid;grid-template-columns:1fr;gap:10px;max-height:660px;overflow:auto;padding-right:4px}.candidate{border:1px solid #dbeafe;background:linear-gradient(180deg,#fff,#f8fbff);border-radius:14px;padding:12px;cursor:grab;user-select:none}.candidate:active{cursor:grabbing}.candidate .name{font-weight:900;letter-spacing:-.02em}.candidate .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px;color:#475569;font-size:12px}.tag{display:inline-flex;padding:3px 7px;border-radius:999px;background:#eef2ff;color:#1e3a8a;font-weight:800}
-    .slot{border:2px dashed #cbd5e1;border-radius:18px;padding:16px;background:#fbfdff;min-height:320px;transition:.15s}.slot.drag-over{border-color:#2563eb;background:#eff6ff;transform:translateY(-2px)}.slot-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.slot-title strong{font-size:16px}
-    .summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}@media(max-width:980px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.summary{grid-template-columns:1fr}}
-    .metric{border:1px solid #e5e7eb;border-radius:16px;padding:16px;background:linear-gradient(180deg,#fff,#f8fafc)}.metric .label{color:#64748b;font-size:12px;font-weight:800}.metric .value{margin-top:5px;font-size:22px;font-weight:900;letter-spacing:-1px;text-align:right;font-variant-numeric:tabular-nums}.metric .sub{margin-top:4px;color:#64748b;font-size:12px;text-align:right}
-    .api-box,.cash-box{border-radius:16px;padding:14px;margin-top:14px;font-size:14px}.api-box{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}.cash-box{background:#eef2ff;border:1px solid #c7d2fe;color:#1e3a8a}
-    .table-wrap{overflow-x:auto;border:1px solid #e5e7eb;border-radius:16px}table{width:100%;min-width:1080px;border-collapse:collapse;font-size:13px;background:white}th,td{padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}th:first-child,td:first-child{text-align:left}th{background:#f8fafc;color:#334155}
-    canvas{width:100%;height:320px;border:1px solid #e5e7eb;border-radius:16px;background:white}.small{color:#64748b;font-size:12px}.pill{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;background:#dbeafe;color:#1e40af;font-size:12px;font-weight:800;margin-left:6px}
+    body{margin:0;font-family:"Noto Sans KR",Arial,sans-serif;background:#0f172a;color:#e2e8f0}
+    .wrap{max-width:1100px;margin:0 auto;padding:20px}
+    .card{background:#111827;border:1px solid #334155;border-radius:14px;padding:16px;margin-bottom:14px}
+    h1,h2,h3{margin:0 0 10px}
+    .muted{color:#94a3b8}
+    .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    button{border:0;border-radius:10px;padding:9px 12px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer}
+    button.alt{background:#1f2937;border:1px solid #334155}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+    .pill{display:inline-block;background:#1e293b;padding:3px 9px;border-radius:999px;font-size:12px}
+    .hand{display:flex;flex-wrap:wrap;gap:8px;min-height:52px}
+    .cardbtn{background:#0b3c5d;border:1px solid #334155;padding:8px 10px;border-radius:10px}
+    .play-area{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+    .seat{border:1px dashed #475569;border-radius:10px;padding:10px;min-height:78px;background:#0b1220}
+    .log{height:180px;overflow:auto;background:#020617;border:1px solid #334155;border-radius:10px;padding:10px;font-size:14px}
+    .ok{color:#34d399}.warn{color:#fbbf24}
   </style>
 </head>
 <body>
-<header><div class="wrap"><h1>은퇴 현금흐름 계산기</h1><p class="subtitle">월배당 후보 종목을 드래그해 3개 선택칸에 넣고, 월 현금흐름 목표 달성 여부를 계산합니다.</p></div></header>
-<main><div class="grid">
-<section class="card"><div class="note"><strong>사용 방법</strong><br>왼쪽 월배당 후보 종목을 드래그해서 오른쪽 3개 선택칸 중 하나에 놓으면 종목명, 종목코드, 1주당 월 배당금, 상승률이 자동 입력됩니다. 드롭 직후 현재가 API 조회가 자동 실행됩니다. API가 실패하면 현재가를 직접 입력해도 계산됩니다.</div></section>
-<section class="card third"><h2>1. 은퇴 현금흐름 목표</h2><div class="form-grid"><div><label for="startDate">시작일자</label><input id="startDate" type="date"></div><div><label for="endDate">끝나는 날</label><input id="endDate" type="date" value="2033-12-31"></div><div><label for="monthlyCashNeed">월 필요 현금흐름</label><input id="monthlyCashNeed" class="accounting" type="text" value="5,000,000"><p class="small">기본값 500만원입니다.</p></div><div><label for="dividendTaxRate">일반계좌 배당세율 (%)</label><input id="dividendTaxRate" class="accounting" type="text" value="15.4"></div></div><div id="cashFlowAdvice" class="cash-box">계산 후 월 현금흐름 충족 여부와 목표 달성 방법이 표시됩니다.</div><div class="btns"><button onclick="fetchAllPrices(true)">현재가 전체 조회</button><button class="secondary" onclick="calculate()">계산하기</button><button class="light" onclick="saveInputs()">입력값 저장</button><button class="danger" onclick="resetInputs()">초기화</button></div><div id="apiStatus" class="api-box">종목을 드래그하거나 종목코드를 입력하면 현재가를 자동 조회합니다.</div></section>
-<section class="card third"><h2>2. 월배당 후보 종목</h2><p class="small">카드를 드래그해서 종목 선택칸에 놓으세요.</p><div id="candidateList" class="candidate-list"></div></section>
-<section class="card" style="grid-column:span 4;"><h2>3. 목표 달성 추가매수 제안</h2><div id="purchaseAdvice" class="cash-box">월 현금흐름이 부족하면 각 종목별 필요 추가매수 금액을 계산해 표시합니다.</div></section>
-<section class="card"><h2>4. 종목 선택칸</h2><div class="form-grid-3">
-<div class="slot" data-slot="1"><div class="slot-title"><strong>선택 종목 1</strong><button class="light" onclick="clearSlot(1)">비우기</button></div><label for="stockName1">종목명</label><input id="stockName1" type="text" value="TIGER 미국나스닥100타겟데일리커버드콜"><label for="stockCode1">종목코드</label><input id="stockCode1" type="text" value="486290"><label for="currentPrice1">현재 주가</label><input id="currentPrice1" class="accounting" type="text" value="11,085"><label for="shares1">보유수량</label><input id="shares1" class="accounting" type="text" value="0"><label for="monthlyDividendPerShare1">1주당 월 배당금</label><input id="monthlyDividendPerShare1" class="accounting" type="text" value="128"><label for="growthRate1">연 주가 상승률 (%)</label><input id="growthRate1" class="accounting" type="text" value="5.0"></div>
-<div class="slot" data-slot="2"><div class="slot-title"><strong>선택 종목 2</strong><button class="light" onclick="clearSlot(2)">비우기</button></div><label for="stockName2">종목명</label><input id="stockName2" type="text" value=""><label for="stockCode2">종목코드</label><input id="stockCode2" type="text" value=""><label for="currentPrice2">현재 주가</label><input id="currentPrice2" class="accounting" type="text" value="0"><label for="shares2">보유수량</label><input id="shares2" class="accounting" type="text" value="0"><label for="monthlyDividendPerShare2">1주당 월 배당금</label><input id="monthlyDividendPerShare2" class="accounting" type="text" value="0"><label for="growthRate2">연 주가 상승률 (%)</label><input id="growthRate2" class="accounting" type="text" value="5.0"></div>
-<div class="slot" data-slot="3"><div class="slot-title"><strong>선택 종목 3</strong><button class="light" onclick="clearSlot(3)">비우기</button></div><label for="stockName3">종목명</label><input id="stockName3" type="text" value=""><label for="stockCode3">종목코드</label><input id="stockCode3" type="text" value=""><label for="currentPrice3">현재 주가</label><input id="currentPrice3" class="accounting" type="text" value="0"><label for="shares3">보유수량</label><input id="shares3" class="accounting" type="text" value="0"><label for="monthlyDividendPerShare3">1주당 월 배당금</label><input id="monthlyDividendPerShare3" class="accounting" type="text" value="0"><label for="growthRate3">연 주가 상승률 (%)</label><input id="growthRate3" class="accounting" type="text" value="5.0"></div>
-</div></section>
-<section class="card"><h2>5. 요약 결과 <span id="periodPill" class="pill"></span></h2><div id="summary" class="summary"></div></section>
-<section class="card half"><h2>6. 월 현금흐름 구성</h2><div class="table-wrap"><table style="min-width:760px;"><thead><tr><th>종목</th><th>현재가</th><th>보유수량</th><th>평가금액</th><th>세전 월 배당금</th><th>세후 월 배당금</th></tr></thead><tbody id="stockResultBody"></tbody></table></div></section>
-<section class="card half"><h2>7. 예상 자산 추이</h2><canvas id="chart" width="900" height="320"></canvas></section>
-<section class="card"><h2>8. 목표 달성 추가매수 상세표</h2><div class="table-wrap"><table style="min-width:900px;"><thead><tr><th>종목</th><th>1주당 세후 월 배당금</th><th>부족분 해결 필요 추가주식수</th><th>필요 추가매수금액</th><th>비고</th></tr></thead><tbody id="needBody"></tbody></table></div></section>
-<section class="card"><h2>9. 연도별 예상표</h2><div class="btns" style="margin-top:0;margin-bottom:14px;"><button class="secondary" onclick="downloadCsv()">결과 CSV 다운로드</button></div><div class="table-wrap"><table><thead><tr><th>연도</th><th>종목1 예상가</th><th>종목1 평가금액</th><th>종목2 예상가</th><th>종목2 평가금액</th><th>종목3 예상가</th><th>종목3 평가금액</th><th>총 평가금액</th><th>세전 월 배당금</th><th>세후 월 배당금</th><th>월 부족/초과</th></tr></thead><tbody id="yearlyBody"></tbody></table></div></section>
-</div></main>
+<div class="wrap">
+  <h1>혼자 하는 콘트랙트 브릿지 연습게임</h1>
+  <p class="muted">브릿지를 처음 접하는 사람도 <b>규칙 학습</b> + <b>미니 연습 라운드</b>를 통해 기본 개념(입찰/트릭/계약)을 익히도록 구성했습니다.</p>
+
+  <section class="card">
+    <h2>1) 규칙 익히기</h2>
+    <p id="lessonText">아래 버튼을 누르면 순서대로 브릿지 핵심 규칙을 짧게 설명해 줍니다.</p>
+    <div class="btns">
+      <button onclick="nextLesson()">규칙 한 단계씩 보기</button>
+      <button class="alt" onclick="showAllLessons()">전체 요약 보기</button>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <h2>2) 입찰(비딩) 연습</h2>
+      <p class="muted">목표: 예시 손패를 보고 적절한 시작 입찰을 고르기.</p>
+      <p><span class="pill" id="biddingQuestion">문제를 불러오는 중...</span></p>
+      <div id="biddingOptions" class="btns"></div>
+      <p id="biddingResult" class="muted"></p>
+      <div class="btns"><button class="alt" onclick="newBiddingQuiz()">다음 비딩 문제</button></div>
+    </section>
+
+    <section class="card">
+      <h2>3) 트릭 플레이 연습</h2>
+      <p class="muted">당신은 선언자(South). <b>같은 무늬가 있으면 반드시 따라내기</b>를 연습합니다.</p>
+      <p><span class="pill" id="contractInfo">계약: 2♥ (목표 8트릭)</span></p>
+      <div><b>내 손패</b></div>
+      <div id="playerHand" class="hand"></div>
+      <div class="play-area">
+        <div class="seat"><b>West</b><div id="westPlay"></div></div>
+        <div class="seat"><b>North(더미)</b><div id="northPlay"></div></div>
+        <div class="seat"><b>East</b><div id="eastPlay"></div></div>
+        <div class="seat"><b>South(나)</b><div id="southPlay"></div></div>
+      </div>
+      <p id="trickResult" class="muted"></p>
+      <div class="btns">
+        <button onclick="startPracticeRound()">연습 라운드 시작</button>
+        <button class="alt" onclick="resetPractice()">초기화</button>
+      </div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>학습 로그</h2>
+    <div id="log" class="log"></div>
+  </section>
+</div>
+
 <script>
-const $=id=>document.getElementById(id);let lastYearlyRows=[];
-const monthlyDividendCandidates=[
-{name:"TIGER 미국나스닥100타겟데일리커버드콜",code:"486290",dps:128,growth:5.0,type:"국내 월배당 ETF"},
-{name:"TIGER 미국배당다우존스타겟커버드콜2호",code:"458760",dps:86,growth:4.0,type:"국내 월배당 ETF"},
-{name:"TIGER 미국S&P500타겟데일리커버드콜",code:"482730",dps:105,growth:4.0,type:"국내 월배당 ETF"},
-{name:"KODEX 미국배당프리미엄액티브",code:"441640",dps:80,growth:4.0,type:"국내 월배당 ETF"},
-{name:"KODEX 미국나스닥100데일리커버드콜OTM",code:"475720",dps:100,growth:5.0,type:"국내 월배당 ETF"},
-{name:"SOL 미국배당다우존스",code:"446720",dps:36,growth:5.0,type:"국내 월배당 ETF"},
-{name:"ACE 미국배당다우존스",code:"402970",dps:35,growth:5.0,type:"국내 월배당 ETF"},
-{name:"RISE 미국배당100데일리고정커버드콜",code:"475380",dps:85,growth:4.0,type:"국내 월배당 ETF"},
-{name:"TIGER 리츠부동산인프라",code:"329200",dps:40,growth:2.0,type:"국내 월배당 ETF"},
-{name:"KODEX 한국부동산리츠인프라",code:"476800",dps:38,growth:2.0,type:"국내 월배당 ETF"}
+const lessons=[
+"브릿지는 4명이 2:2 팀(북-남 vs 동-서)으로 진행하며, 총 13트릭을 플레이합니다.",
+"입찰(비딩) 단계에서 몇 트릭을 어떤 트럼프(또는 노트럼프)로 가져갈지 계약을 정합니다.",
+"예: 2♥ 계약은 하트 트럼프로 8트릭(6+2)을 목표로 한다는 뜻입니다.",
+"플레이 단계에서는 리드된 무늬가 있으면 같은 무늬를 반드시 내야 합니다(팔로우 수트).",
+"트럼프 무늬 카드는 다른 무늬보다 강해서, 해당 트릭을 이길 수 있습니다.",
+"초보자 팁: 높은 카드(A,K,Q)를 세고, 긴 무늬를 활용하며, 계약 목표 트릭 수를 항상 의식하세요."
 ];
-function todayISO(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function rawNumber(v){if(v==null)return 0;let t=String(v).trim(),neg=false;if(t.startsWith("(")&&t.endsWith(")"))neg=true;t=t.replace(/[(),\s원주%]/g,"");const n=Number(t);return Number.isFinite(n)?(neg?-n:n):0}function num(id){return rawNumber($(id).value)}function pct(id){return num(id)/100}
-function accounting(n,d=0,s=""){if(!Number.isFinite(n))n=0;const text=Math.abs(n).toLocaleString("ko-KR",{minimumFractionDigits:d,maximumFractionDigits:d});return n<0?"("+text+s+")":text+s}function money(n){return accounting(Math.round(n),0,"원")}function qty(n){return accounting(n,6,"주")}function percent(n){return accounting(n,2,"%")}
-function formatInput(id,d=0){const el=$(id);if(el)el.value=accounting(rawNumber(el.value),d,"")}
-function renderCandidates(){const list=$("candidateList");list.innerHTML=monthlyDividendCandidates.map((s,i)=>`<div class="candidate" draggable="true" data-index="${i}"><div class="name">${s.name}</div><div class="meta"><span class="tag">${s.code}</span><span class="tag">${s.type}</span><span class="tag">월 ${money(s.dps)}/주</span><span class="tag">상승률 ${percent(s.growth)}</span></div></div>`).join("");document.querySelectorAll(".candidate").forEach(c=>c.addEventListener("dragstart",e=>{e.dataTransfer.setData("text/plain",c.dataset.index);e.dataTransfer.effectAllowed="copy"}))}
-function setupDropSlots(){document.querySelectorAll(".slot").forEach(slot=>{slot.addEventListener("dragover",e=>{e.preventDefault();slot.classList.add("drag-over");e.dataTransfer.dropEffect="copy"});slot.addEventListener("dragleave",()=>slot.classList.remove("drag-over"));slot.addEventListener("drop",async e=>{e.preventDefault();slot.classList.remove("drag-over");const stock=monthlyDividendCandidates[Number(e.dataTransfer.getData("text/plain"))];if(!stock)return;const n=slot.dataset.slot;applyCandidateToSlot(stock,n);await fetchPriceForSlot(n,false);calculate()})})}
-function applyCandidateToSlot(s,i){$("stockName"+i).value=s.name;$("stockCode"+i).value=s.code;$("monthlyDividendPerShare"+i).value=accounting(s.dps,0,"");$("growthRate"+i).value=accounting(s.growth,2,"")}
-function clearSlot(i){["stockName","stockCode"].forEach(p=>$(p+i).value="");$("currentPrice"+i).value="0";$("shares"+i).value="0";$("monthlyDividendPerShare"+i).value="0";$("growthRate"+i).value="5.00";calculate()}
-function attachAccountingInputs(){const ids=["monthlyCashNeed","dividendTaxRate","currentPrice1","shares1","monthlyDividendPerShare1","growthRate1","currentPrice2","shares2","monthlyDividendPerShare2","growthRate2","currentPrice3","shares3","monthlyDividendPerShare3","growthRate3"];ids.forEach(id=>{const d=id.includes("growthRate")||id==="dividendTaxRate"?2:(id.includes("shares")?6:0);$(id).addEventListener("blur",()=>{formatInput(id,d);calculate()})});[1,2,3].forEach(i=>{$("stockCode"+i).addEventListener("blur",async()=>{if($("stockCode"+i).value.trim())await fetchPriceForSlot(i,false);calculate()});$("stockCode"+i).addEventListener("keydown",async e=>{if(e.key==="Enter"){e.preventDefault();if($("stockCode"+i).value.trim())await fetchPriceForSlot(i,true);calculate()}})})}
-async function fetchNaverPrice(code){const u="https://finance.naver.com/item/main.naver?code="+encodeURIComponent(code),p="https://api.allorigins.win/raw?url="+encodeURIComponent(u);const r=await fetch(p,{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);const h=await r.text();const m=h.match(/<p class="no_today">[\s\S]*?<span class="blind">([\d,]+)<\/span>/);if(m)return rawNumber(m[1]);const arr=Array.from(h.matchAll(/<span class="blind">([\d,]+)<\/span>/g)).map(x=>rawNumber(x[1]));const price=arr.find(v=>v>100&&v<5000000);if(!price)throw new Error("가격 파싱 실패");return price}
-async function fetchPriceForSlot(i,manual=false){const code=$("stockCode"+i).value.trim();if(!code)return;$("apiStatus").innerHTML="종목 "+i+" ("+code+") 현재가를 불러오는 중입니다.";try{const price=await fetchNaverPrice(code);$("currentPrice"+i).value=accounting(price,0,"");$("apiStatus").innerHTML="종목 "+i+" ("+code+") 현재가 반영 완료: <strong>"+money(price)+"</strong>"}catch(e){$("apiStatus").innerHTML="종목 "+i+" ("+code+") 현재가 API 실패. 입력된 현재가를 사용합니다.";if(manual)alert("현재가 API 조회에 실패했습니다. 현재 입력된 가격으로 계산합니다.")}}
-async function fetchAllPrices(manual=false){const res=[];$("apiStatus").innerHTML="현재가 전체 조회 중입니다.";for(let i=1;i<=3;i++){const code=$("stockCode"+i).value.trim();if(!code){res.push("종목 "+i+": 종목코드 없음");continue}try{const price=await fetchNaverPrice(code);$("currentPrice"+i).value=accounting(price,0,"");res.push("종목 "+i+" ("+code+"): "+money(price))}catch(e){res.push("종목 "+i+" ("+code+"): API 실패, 입력가 사용")}}$("apiStatus").innerHTML=res.join("<br>")+"<br>업데이트: "+new Date().toLocaleString("ko-KR");calculate()}
-function stockData(i){const name=$("stockName"+i).value.trim()||("종목 "+i),code=$("stockCode"+i).value.trim(),price=num("currentPrice"+i),shares=num("shares"+i),monthlyDps=num("monthlyDividendPerShare"+i),growthRate=pct("growthRate"+i),grossMonthlyDividend=shares*monthlyDps,netMonthlyDividend=grossMonthlyDividend*(1-pct("dividendTaxRate")),value=price*shares,netMonthlyPerShare=monthlyDps*(1-pct("dividendTaxRate"));return{i,name,code,price,shares,monthlyDps,growthRate,grossMonthlyDividend,netMonthlyDividend,value,netMonthlyPerShare}}
-function yearsBetween(startDate,year){const s=new Date(startDate+"T00:00:00"),y=new Date(year+"-12-31T00:00:00");return Math.max(0,(y-s)/(1000*60*60*24)/365)}
-function calculate(){const startDate=$("startDate").value||todayISO(),endDate=$("endDate").value||"2033-12-31";if(startDate>endDate){alert("시작일과 끝나는 날을 확인해 주세요.");return}const monthlyNeed=num("monthlyCashNeed"),stocks=[stockData(1),stockData(2),stockData(3)],totalValue=stocks.reduce((a,s)=>a+s.value,0),totalGrossMonthly=stocks.reduce((a,s)=>a+s.grossMonthlyDividend,0),totalNetMonthly=stocks.reduce((a,s)=>a+s.netMonthlyDividend,0),cashGap=totalNetMonthly-monthlyNeed,annualNetDividend=totalNetMonthly*12;renderCashAdvice(monthlyNeed,totalNetMonthly,cashGap,stocks);renderPurchaseAdvice(monthlyNeed,totalNetMonthly,stocks);renderSummary(totalValue,totalGrossMonthly,totalNetMonthly,monthlyNeed,cashGap,annualNetDividend,startDate,endDate);renderStockTable(stocks);renderNeedTable(monthlyNeed,totalNetMonthly,stocks);renderYearly(stocks,startDate,endDate,monthlyNeed);drawChart()}
-function renderCashAdvice(need,net,gap,stocks){if(gap>=0){$("cashFlowAdvice").innerHTML="<strong>월 현금흐름 충족</strong><br>세후 월 배당금 <strong>"+money(net)+"</strong>으로 월 필요 현금흐름 <strong>"+money(need)+"</strong>보다 <strong>"+money(gap)+"</strong> 초과합니다.";return}const shortage=Math.abs(gap),cands=stocks.filter(s=>s.code&&s.price>0&&s.netMonthlyPerShare>0).map(s=>({...s,needShares:shortage/s.netMonthlyPerShare,needAmount:shortage/s.netMonthlyPerShare*s.price})).sort((a,b)=>a.needAmount-b.needAmount),best=cands[0];if(!best){$("cashFlowAdvice").innerHTML="<strong>월 현금흐름 부족</strong><br>세후 월 배당금 <strong>"+money(net)+"</strong> 기준으로 월 필요 현금흐름까지 <strong>"+money(shortage)+"</strong> 부족합니다.<br>종목별 1주당 월 배당금을 입력하면 목표 달성 추가매수 금액을 계산할 수 있습니다.";return}$("cashFlowAdvice").innerHTML="<strong>월 현금흐름 부족</strong><br>월 필요 현금흐름까지 <strong>"+money(shortage)+"</strong> 부족합니다.<br>가장 적은 추가매수금액 기준으로는 <strong>"+best.name+"</strong>을 약 <strong>"+qty(best.needShares)+"</strong>, 즉 <strong>"+money(best.needAmount)+"</strong> 추가 매수하면 목표 현금흐름 달성이 예상됩니다."}
-function renderPurchaseAdvice(need,net,stocks){const shortage=need-net;if(shortage<=0){$("purchaseAdvice").innerHTML="<strong>추가매수 불필요</strong><br>현재 보유 종목의 세후 월 배당금이 목표 현금흐름을 충족합니다.";return}const c=stocks.filter(s=>s.code&&s.price>0&&s.netMonthlyPerShare>0).map(s=>({...s,needShares:shortage/s.netMonthlyPerShare,needAmount:shortage/s.netMonthlyPerShare*s.price})).sort((a,b)=>a.needAmount-b.needAmount);if(!c.length){$("purchaseAdvice").innerHTML="<strong>계산 불가</strong><br>현재가와 1주당 월 배당금을 입력한 종목이 있어야 추가매수 전략을 계산할 수 있습니다.";return}const best=c[0];$("purchaseAdvice").innerHTML="<strong>목표 달성 제안</strong><br>부족한 세후 월 현금흐름은 <strong>"+money(shortage)+"</strong>입니다.<br>단일 종목으로 해결한다면 현재 입력값 기준 <strong>"+best.name+"</strong>이 가장 효율적입니다.<br>필요 추가매수: <strong>"+qty(best.needShares)+"</strong> / <strong>"+money(best.needAmount)+"</strong><br>분산 매수 관점에서는 3개 종목의 배당 안정성, 가격 변동성, 세후 수익률을 함께 비교하는 것이 좋습니다."}
-function renderSummary(totalValue,gross,net,need,gap,annual,start,end){$("periodPill").textContent=start+" ~ "+end;const y=totalValue>0?annual/totalValue*100:0,data=[["총 평가금액",money(totalValue),"3개 종목 현재가 × 보유수량"],["세전 월 배당금",money(gross),"세금 차감 전 현금흐름"],["세후 월 배당금",money(net),"배당세율 반영 후 현금흐름"],["월 부족/초과",money(gap),gap>=0?"목표 초과":"목표 부족"],["월 필요 현금흐름",money(need),"기본값 500만원"],["연 세후 배당금",money(annual),"세후 월 배당금 × 12"],["세후 배당수익률",percent(y),"총 평가금액 대비"],["선택 종목 수",accounting([1,2,3].filter(i=>$("stockCode"+i).value.trim()).length,0,"개"),"입력된 종목코드 기준"]];$("summary").innerHTML=data.map(item=>`<div class="metric"><div class="label">${item[0]}</div><div class="value">${item[1]}</div><div class="sub">${item[2]}</div></div>`).join("")}
-function renderStockTable(stocks){$("stockResultBody").innerHTML=stocks.map(s=>`<tr><td>${s.name}${s.code?" ("+s.code+")":""}</td><td>${money(s.price)}</td><td>${qty(s.shares)}</td><td>${money(s.value)}</td><td>${money(s.grossMonthlyDividend)}</td><td>${money(s.netMonthlyDividend)}</td></tr>`).join("")}
-function renderNeedTable(need,net,stocks){const shortage=Math.max(0,need-net);if(shortage<=0){$("needBody").innerHTML=`<tr><td colspan="5" style="text-align:left;">현재 세후 월 배당금이 목표 현금흐름을 충족하므로 추가매수가 필요하지 않습니다.</td></tr>`;return}const rows=stocks.map(s=>{if(!s.code||s.price<=0||s.netMonthlyPerShare<=0)return{name:s.name,perShare:s.netMonthlyPerShare,needShares:0,needAmount:0,note:"현재가 또는 월 배당금 입력 필요"};const needShares=shortage/s.netMonthlyPerShare,needAmount=needShares*s.price;return{name:s.name+(s.code?" ("+s.code+")":""),perShare:s.netMonthlyPerShare,needShares,needAmount,note:"이 종목만 추가매수하는 경우"}}).sort((a,b)=>{if(a.needAmount===0)return 1;if(b.needAmount===0)return-1;return a.needAmount-b.needAmount});$("needBody").innerHTML=rows.map((r,i)=>`<tr><td>${r.name}</td><td>${money(r.perShare)}</td><td>${r.needShares>0?qty(r.needShares):"-"}</td><td>${r.needAmount>0?money(r.needAmount):"-"}</td><td>${i===0&&r.needAmount>0?"최소 추가매수금액":r.note}</td></tr>`).join("")}
-function renderYearly(stocks,start,end,need){const sy=Number(start.slice(0,4)),ey=Number(end.slice(0,4)),rows=[];for(let year=sy;year<=ey;year++){const years=yearsBetween(start,year),projected=stocks.map(s=>{const projectedPrice=s.price*Math.pow(1+s.growthRate,years),projectedValue=projectedPrice*s.shares;return{projectedPrice,projectedValue}}),totalValue=projected.reduce((a,s)=>a+s.projectedValue,0),grossMonthly=stocks.reduce((a,s)=>a+s.grossMonthlyDividend,0),netMonthly=grossMonthly*(1-pct("dividendTaxRate")),gap=netMonthly-need;rows.push({year,projected,totalValue,grossMonthly,netMonthly,gap})}lastYearlyRows=rows;$("yearlyBody").innerHTML=rows.map(r=>`<tr><td>${r.year}</td><td>${money(r.projected[0].projectedPrice)}</td><td>${money(r.projected[0].projectedValue)}</td><td>${money(r.projected[1].projectedPrice)}</td><td>${money(r.projected[1].projectedValue)}</td><td>${money(r.projected[2].projectedPrice)}</td><td>${money(r.projected[2].projectedValue)}</td><td>${money(r.totalValue)}</td><td>${money(r.grossMonthly)}</td><td>${money(r.netMonthly)}</td><td>${money(r.gap)}</td></tr>`).join("")}
-function drawChart(){const rows=lastYearlyRows,canvas=$("chart"),ctx=canvas.getContext("2d");ctx.clearRect(0,0,canvas.width,canvas.height);if(!rows.length)return;const pad=48,w=canvas.width-pad*2,h=canvas.height-pad*2,values=rows.map(r=>r.totalValue),min=Math.min(...values)*.98,max=Math.max(...values)*1.02;function x(i){return pad+(rows.length===1?0:i*w/(rows.length-1))}function y(v){return pad+h-((v-min)/(max-min||1))*h}ctx.strokeStyle="#e5e7eb";ctx.lineWidth=1;for(let i=0;i<=4;i++){const yy=pad+i*h/4;ctx.beginPath();ctx.moveTo(pad,yy);ctx.lineTo(pad+w,yy);ctx.stroke()}ctx.strokeStyle="#16a34a";ctx.lineWidth=3;ctx.beginPath();rows.forEach((r,i)=>{const xx=x(i),yy=y(r.totalValue);if(i===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy)});ctx.stroke();ctx.fillStyle="#334155";ctx.font="14px Malgun Gothic, Arial";ctx.fillText("총 평가금액 예상 추이",pad,24);ctx.fillText(money(max),pad,pad-10);ctx.fillText(money(min),pad,pad+h+20)}
-function saveInputs(){const ids=["startDate","endDate","monthlyCashNeed","dividendTaxRate","stockName1","stockCode1","currentPrice1","shares1","monthlyDividendPerShare1","growthRate1","stockName2","stockCode2","currentPrice2","shares2","monthlyDividendPerShare2","growthRate2","stockName3","stockCode3","currentPrice3","shares3","monthlyDividendPerShare3","growthRate3"],data={};ids.forEach(id=>data[id]=$(id).value);localStorage.setItem("retirementCashFlowCalculatorV3",JSON.stringify(data));alert("입력값을 저장했습니다.")}
-function loadInputs(){const raw=localStorage.getItem("retirementCashFlowCalculatorV3");if(!raw)return false;const data=JSON.parse(raw);Object.keys(data).forEach(id=>{if($(id))$(id).value=data[id]});return true}
-function resetInputs(){localStorage.removeItem("retirementCashFlowCalculatorV3");location.reload()}
-function downloadCsv(){if(!lastYearlyRows.length){alert("먼저 계산하기를 눌러 주세요.");return}const header=["연도","종목1 예상가","종목1 평가금액","종목2 예상가","종목2 평가금액","종목3 예상가","종목3 평가금액","총 평가금액","세전 월 배당금","세후 월 배당금","월 부족/초과"],lines=[header.join(",")];lastYearlyRows.forEach(r=>{lines.push([r.year,Math.round(r.projected[0].projectedPrice),Math.round(r.projected[0].projectedValue),Math.round(r.projected[1].projectedPrice),Math.round(r.projected[1].projectedValue),Math.round(r.projected[2].projectedPrice),Math.round(r.projected[2].projectedValue),Math.round(r.totalValue),Math.round(r.grossMonthly),Math.round(r.netMonthly),Math.round(r.gap)].join(","))});const bom="\uFEFF",blob=new Blob([bom+lines.join("\n")],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="retirement_cash_flow_result.csv";a.click();URL.revokeObjectURL(url)}
-window.addEventListener("DOMContentLoaded",async()=>{renderCandidates();setupDropSlots();attachAccountingInputs();const loaded=loadInputs();if(!loaded){$("startDate").value=todayISO();$("endDate").value="2033-12-31"}else{if(!$("startDate").value)$("startDate").value=todayISO();if(!$("endDate").value)$("endDate").value="2033-12-31"}await fetchAllPrices(false);calculate()});
-</script></body></html>
+let lessonIdx=0;
+function log(msg,type=""){
+  const el=document.getElementById('log');
+  const cls=type?` class="${type}"`:"";
+  el.innerHTML += `<div${cls}>• ${msg}</div>`;
+  el.scrollTop=el.scrollHeight;
+}
+function nextLesson(){
+  document.getElementById('lessonText').textContent=lessons[lessonIdx];
+  log(`규칙 ${lessonIdx+1} 학습: ${lessons[lessonIdx]}`,'ok');
+  lessonIdx=(lessonIdx+1)%lessons.length;
+}
+function showAllLessons(){
+  document.getElementById('lessonText').innerHTML=lessons.map((x,i)=>`${i+1}. ${x}`).join('<br>');
+  log('전체 규칙 요약을 펼쳐서 확인했습니다.','ok');
+}
+
+const biddingBank=[
+  {q:"손패: ♠AKQ4 ♥QJ8 ♦A72 ♣K94 (15HCP). 첫 입찰은?",opts:["1NT","1♠","2♠"],a:0,why:"균형형 15~17점은 보통 1NT 오프닝."},
+  {q:"손패: ♠KQJ987 ♥83 ♦K4 ♣A72 (11HCP, 스페이드 6장). 첫 입찰은?",opts:["1♠","2♠","1NT"],a:0,why:"긴 5~6장 메이저가 있으면 해당 무늬 1레벨 오프닝이 기본."},
+  {q:"손패: ♠A43 ♥AKJ2 ♦Q83 ♣KQ2 (18HCP). 첫 입찰은?",opts:["1♥","1NT","2♣"],a:2,why:"강한 22+는 아니지만 예시 학습상 강한 손으로 2♣ 개념 연습용 문제."}
+];
+function newBiddingQuiz(){
+  const quiz=biddingBank[Math.floor(Math.random()*biddingBank.length)];
+  window.curQuiz=quiz;
+  document.getElementById('biddingQuestion').textContent=quiz.q;
+  const box=document.getElementById('biddingOptions');
+  box.innerHTML='';
+  quiz.opts.forEach((opt,idx)=>{
+    const b=document.createElement('button');
+    b.textContent=opt;
+    b.onclick=()=>answerBid(idx);
+    box.appendChild(b);
+  });
+  document.getElementById('biddingResult').textContent='';
+}
+function answerBid(i){
+  const r=document.getElementById('biddingResult');
+  if(i===curQuiz.a){r.innerHTML=`<span class='ok'>정답!</span> ${curQuiz.why}`;log(`비딩 정답: ${curQuiz.q}`,'ok');}
+  else{r.innerHTML=`<span class='warn'>아쉽습니다.</span> 힌트: ${curQuiz.why}`;log(`비딩 오답 시도: ${curQuiz.q}`,'warn');}
+}
+
+const ranks=['A','K','Q','J','10','9'];
+const suits=['♠','♥','♦','♣'];
+let hand=[],leadSuit='';
+function randomCard(){return suits[Math.floor(Math.random()*4)]+ranks[Math.floor(Math.random()*ranks.length)]}
+function startPracticeRound(){
+  hand=[randomCard(),randomCard(),randomCard(),randomCard(),randomCard()];
+  leadSuit=suits[Math.floor(Math.random()*4)];
+  document.getElementById('westPlay').textContent=leadSuit+'리드';
+  document.getElementById('northPlay').textContent='(더미 대기)';
+  document.getElementById('eastPlay').textContent='(상대 대기)';
+  document.getElementById('southPlay').textContent='카드를 선택하세요';
+  document.getElementById('trickResult').textContent=`현재 트릭 리드 무늬: ${leadSuit}`;
+  renderHand();
+  log(`트릭 연습 시작. 리드 무늬는 ${leadSuit}.`,'ok');
+}
+function renderHand(){
+  const box=document.getElementById('playerHand');
+  box.innerHTML='';
+  hand.forEach((c,idx)=>{
+    const b=document.createElement('button');
+    b.className='cardbtn';
+    b.textContent=c;
+    b.onclick=()=>playCard(idx);
+    box.appendChild(b);
+  });
+}
+function playCard(i){
+  const chosen=hand[i];
+  const hasLead=hand.some(c=>c.startsWith(leadSuit));
+  const follows=chosen.startsWith(leadSuit);
+  if(hasLead && !follows){
+    document.getElementById('trickResult').innerHTML="<span class='warn'>규칙 위반!</span> 같은 무늬가 있으면 반드시 따라내야 합니다.";
+    log(`규칙 위반: ${chosen} 선택 (리드 ${leadSuit} 보유 중).`,'warn');
+    return;
+  }
+  document.getElementById('southPlay').textContent=chosen;
+  hand.splice(i,1);
+  renderHand();
+  document.getElementById('trickResult').innerHTML="<span class='ok'>좋아요!</span> 유효한 플레이입니다. 다음 트릭도 반복 연습하세요.";
+  log(`유효한 플레이: ${chosen}.`,'ok');
+}
+function resetPractice(){
+  hand=[];leadSuit='';
+  document.getElementById('playerHand').innerHTML='';
+  ['westPlay','northPlay','eastPlay','southPlay'].forEach(id=>document.getElementById(id).textContent='');
+  document.getElementById('trickResult').textContent='연습 라운드를 시작해 주세요.';
+  log('트릭 연습을 초기화했습니다.');
+}
+
+newBiddingQuiz();
+resetPractice();
+nextLesson();
+</script>
+</body>
+</html>
