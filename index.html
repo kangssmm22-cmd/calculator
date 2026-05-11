@@ -3,180 +3,130 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>혼자 하는 콘트랙트 브릿지 연습게임</title>
+  <title>혼자 하는 콘트랙트 브릿지 트레이너</title>
   <style>
-    body{margin:0;font-family:"Noto Sans KR",Arial,sans-serif;background:#0f172a;color:#e2e8f0}
-    .wrap{max-width:1100px;margin:0 auto;padding:20px}
-    .card{background:#111827;border:1px solid #334155;border-radius:14px;padding:16px;margin-bottom:14px}
-    h1,h2,h3{margin:0 0 10px}
-    .muted{color:#94a3b8}
-    .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-    button{border:0;border-radius:10px;padding:9px 12px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer}
-    button.alt{background:#1f2937;border:1px solid #334155}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media(max-width:900px){.grid{grid-template-columns:1fr}}
-    .pill{display:inline-block;background:#1e293b;padding:3px 9px;border-radius:999px;font-size:12px}
-    .hand{display:flex;flex-wrap:wrap;gap:8px;min-height:52px}
-    .cardbtn{background:#0b3c5d;border:1px solid #334155;padding:8px 10px;border-radius:10px}
-    .play-area{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
-    .seat{border:1px dashed #475569;border-radius:10px;padding:10px;min-height:78px;background:#0b1220}
-    .log{height:180px;overflow:auto;background:#020617;border:1px solid #334155;border-radius:10px;padding:10px;font-size:14px}
-    .ok{color:#34d399}.warn{color:#fbbf24}
+    :root{--bg:#0f172a;--card:#111827;--line:#334155;--txt:#e2e8f0;--muted:#94a3b8;--ok:#34d399;--warn:#fbbf24}
+    *{box-sizing:border-box} body{margin:0;font-family:"Noto Sans KR",Arial,sans-serif;background:var(--bg);color:var(--txt)}
+    .wrap{max-width:1200px;margin:0 auto;padding:20px} .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px} @media(max-width:930px){.row{grid-template-columns:1fr}}
+    h1,h2,h3{margin:0 0 10px} .muted{color:var(--muted)} .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#1e293b;font-size:12px}
+    button,select{font:inherit} button{border:0;border-radius:10px;padding:8px 11px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer}
+    button.alt{background:#1f2937;border:1px solid var(--line)} .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .play{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px} .seat{border:1px dashed #475569;border-radius:10px;padding:10px;min-height:74px;background:#0b1220}
+    .hand{display:flex;flex-wrap:wrap;gap:8px}.cardbtn{background:#0b3c5d;border:1px solid var(--line)} .log{height:180px;overflow:auto;border:1px solid var(--line);background:#020617;border-radius:8px;padding:10px}
+    .ok{color:var(--ok)} .warn{color:var(--warn)}
   </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>혼자 하는 콘트랙트 브릿지 연습게임</h1>
-  <p class="muted">브릿지를 처음 접하는 사람도 <b>규칙 학습</b> + <b>미니 연습 라운드</b>를 통해 기본 개념(입찰/트릭/계약)을 익히도록 구성했습니다.</p>
+  <h1>혼자 하는 콘트랙트 브릿지 트레이너</h1>
+  <p class="muted">초보자를 위한 <b>규칙 학습 → 비딩 연습 → 선언 플레이 연습</b> 순서의 1인 연습 게임입니다.</p>
 
   <section class="card">
-    <h2>1) 규칙 익히기</h2>
-    <p id="lessonText">아래 버튼을 누르면 순서대로 브릿지 핵심 규칙을 짧게 설명해 줍니다.</p>
+    <h2>1) 규칙 배우기</h2>
+    <p id="lessonText">"규칙 보기"를 눌러 브릿지 핵심 개념을 순서대로 학습하세요.</p>
     <div class="btns">
-      <button onclick="nextLesson()">규칙 한 단계씩 보기</button>
-      <button class="alt" onclick="showAllLessons()">전체 요약 보기</button>
+      <button onclick="nextLesson()">규칙 보기</button>
+      <button class="alt" onclick="showAllLessons()">전체 요약</button>
     </div>
   </section>
 
-  <div class="grid">
+  <div class="row">
     <section class="card">
-      <h2>2) 입찰(비딩) 연습</h2>
-      <p class="muted">목표: 예시 손패를 보고 적절한 시작 입찰을 고르기.</p>
-      <p><span class="pill" id="biddingQuestion">문제를 불러오는 중...</span></p>
+      <h2>2) 비딩 퀴즈</h2>
+      <p><span class="pill" id="biddingQuestion">문제 준비 중...</span></p>
       <div id="biddingOptions" class="btns"></div>
       <p id="biddingResult" class="muted"></p>
-      <div class="btns"><button class="alt" onclick="newBiddingQuiz()">다음 비딩 문제</button></div>
+      <div class="btns"><button class="alt" onclick="newBiddingQuiz()">다음 문제</button></div>
     </section>
 
     <section class="card">
-      <h2>3) 트릭 플레이 연습</h2>
-      <p class="muted">당신은 선언자(South). <b>같은 무늬가 있으면 반드시 따라내기</b>를 연습합니다.</p>
-      <p><span class="pill" id="contractInfo">계약: 2♥ (목표 8트릭)</span></p>
-      <div><b>내 손패</b></div>
+      <h2>3) 선언 플레이 연습</h2>
+      <p class="muted">트럼프/팔로우 수트 규칙을 지키며 <b>계약 트릭</b>을 채워보세요.</p>
+      <div class="btns">
+        <label>계약 레벨
+          <select id="level"><option>1</option><option selected>2</option><option>3</option><option>4</option></select>
+        </label>
+        <label>트럼프
+          <select id="trump"><option>♠</option><option selected>♥</option><option>♦</option><option>♣</option><option>NT</option></select>
+        </label>
+        <button onclick="startPracticeRound()">라운드 시작</button>
+        <button class="alt" onclick="resetPractice()">초기화</button>
+      </div>
+      <p><span class="pill" id="contractInfo">계약 미시작</span> <span class="pill" id="scoreInfo">진행: 0/5 트릭</span></p>
+      <div><b>내 손패(남/선언자)</b></div>
       <div id="playerHand" class="hand"></div>
-      <div class="play-area">
+      <div class="play">
         <div class="seat"><b>West</b><div id="westPlay"></div></div>
         <div class="seat"><b>North(더미)</b><div id="northPlay"></div></div>
         <div class="seat"><b>East</b><div id="eastPlay"></div></div>
         <div class="seat"><b>South(나)</b><div id="southPlay"></div></div>
       </div>
-      <p id="trickResult" class="muted"></p>
-      <div class="btns">
-        <button onclick="startPracticeRound()">연습 라운드 시작</button>
-        <button class="alt" onclick="resetPractice()">초기화</button>
-      </div>
+      <p id="trickResult" class="muted">라운드를 시작해 주세요.</p>
     </section>
   </div>
 
-  <section class="card">
-    <h2>학습 로그</h2>
-    <div id="log" class="log"></div>
-  </section>
+  <section class="card"><h2>학습 로그</h2><div id="log" class="log"></div></section>
 </div>
 
 <script>
 const lessons=[
-"브릿지는 4명이 2:2 팀(북-남 vs 동-서)으로 진행하며, 총 13트릭을 플레이합니다.",
-"입찰(비딩) 단계에서 몇 트릭을 어떤 트럼프(또는 노트럼프)로 가져갈지 계약을 정합니다.",
-"예: 2♥ 계약은 하트 트럼프로 8트릭(6+2)을 목표로 한다는 뜻입니다.",
-"플레이 단계에서는 리드된 무늬가 있으면 같은 무늬를 반드시 내야 합니다(팔로우 수트).",
-"트럼프 무늬 카드는 다른 무늬보다 강해서, 해당 트릭을 이길 수 있습니다.",
-"초보자 팁: 높은 카드(A,K,Q)를 세고, 긴 무늬를 활용하며, 계약 목표 트릭 수를 항상 의식하세요."
+"브릿지는 4명이 2:2 팀으로 진행하고, 한 딜에서 총 13트릭을 플레이합니다.",
+"비딩은 계약을 정하는 단계입니다. 계약 레벨 N은 6+N 트릭 달성이 목표입니다.",
+"플레이 중에는 리드된 무늬가 있으면 반드시 같은 무늬를 내야 합니다(팔로우 수트).",
+"트럼프 계약이면 트럼프가 다른 무늬보다 강합니다. NT는 트럼프가 없습니다.",
+"선언자는 계약 트릭 달성, 수비는 선언자 실패를 목표로 합니다."
 ];
-let lessonIdx=0;
-function log(msg,type=""){
-  const el=document.getElementById('log');
-  const cls=type?` class="${type}"`:"";
-  el.innerHTML += `<div${cls}>• ${msg}</div>`;
-  el.scrollTop=el.scrollHeight;
-}
-function nextLesson(){
-  document.getElementById('lessonText').textContent=lessons[lessonIdx];
-  log(`규칙 ${lessonIdx+1} 학습: ${lessons[lessonIdx]}`,'ok');
-  lessonIdx=(lessonIdx+1)%lessons.length;
-}
-function showAllLessons(){
-  document.getElementById('lessonText').innerHTML=lessons.map((x,i)=>`${i+1}. ${x}`).join('<br>');
-  log('전체 규칙 요약을 펼쳐서 확인했습니다.','ok');
-}
+let lessonIdx=0, curQuiz=null;
+const suits=['♠','♥','♦','♣'], ranks=['A','K','Q','J','10','9','8','7'];
+let hand=[],leaderSuit='',trump='♥',target=8,tricksWon=0,trickNo=0,maxTricks=5;
+
+function log(msg,cls=''){const el=document.getElementById('log');el.innerHTML+=`<div class="${cls}">• ${msg}</div>`;el.scrollTop=el.scrollHeight;}
+function nextLesson(){document.getElementById('lessonText').textContent=lessons[lessonIdx];log(`규칙 ${lessonIdx+1}: ${lessons[lessonIdx]}`,'ok');lessonIdx=(lessonIdx+1)%lessons.length;}
+function showAllLessons(){document.getElementById('lessonText').innerHTML=lessons.map((v,i)=>`${i+1}. ${v}`).join('<br>');}
 
 const biddingBank=[
-  {q:"손패: ♠AKQ4 ♥QJ8 ♦A72 ♣K94 (15HCP). 첫 입찰은?",opts:["1NT","1♠","2♠"],a:0,why:"균형형 15~17점은 보통 1NT 오프닝."},
-  {q:"손패: ♠KQJ987 ♥83 ♦K4 ♣A72 (11HCP, 스페이드 6장). 첫 입찰은?",opts:["1♠","2♠","1NT"],a:0,why:"긴 5~6장 메이저가 있으면 해당 무늬 1레벨 오프닝이 기본."},
-  {q:"손패: ♠A43 ♥AKJ2 ♦Q83 ♣KQ2 (18HCP). 첫 입찰은?",opts:["1♥","1NT","2♣"],a:2,why:"강한 22+는 아니지만 예시 학습상 강한 손으로 2♣ 개념 연습용 문제."}
+{q:"15~17 HCP 균형형 손패의 일반적 오프닝은?",opts:["1NT","1♠","2♣"],a:0,why:"균형형 15~17점은 보통 1NT."},
+{q:"스페이드 6장 + 11HCP, 첫 입찰은?",opts:["1♠","1NT","패스"],a:0,why:"긴 메이저가 있으면 1레벨 오프닝 우선."},
+{q:"파트너가 1♥ 오프닝, 내가 4장 ♥와 10점대면?",opts:["2♥ 지지","1NT","3NT"],a:0,why:"기본 연습에서는 단순 지지부터 학습."}
 ];
-function newBiddingQuiz(){
-  const quiz=biddingBank[Math.floor(Math.random()*biddingBank.length)];
-  window.curQuiz=quiz;
-  document.getElementById('biddingQuestion').textContent=quiz.q;
-  const box=document.getElementById('biddingOptions');
-  box.innerHTML='';
-  quiz.opts.forEach((opt,idx)=>{
-    const b=document.createElement('button');
-    b.textContent=opt;
-    b.onclick=()=>answerBid(idx);
-    box.appendChild(b);
-  });
-  document.getElementById('biddingResult').textContent='';
-}
-function answerBid(i){
-  const r=document.getElementById('biddingResult');
-  if(i===curQuiz.a){r.innerHTML=`<span class='ok'>정답!</span> ${curQuiz.why}`;log(`비딩 정답: ${curQuiz.q}`,'ok');}
-  else{r.innerHTML=`<span class='warn'>아쉽습니다.</span> 힌트: ${curQuiz.why}`;log(`비딩 오답 시도: ${curQuiz.q}`,'warn');}
-}
+function newBiddingQuiz(){curQuiz=biddingBank[Math.floor(Math.random()*biddingBank.length)];document.getElementById('biddingQuestion').textContent=curQuiz.q;const box=document.getElementById('biddingOptions');box.innerHTML='';curQuiz.opts.forEach((opt,i)=>{const b=document.createElement('button');b.textContent=opt;b.onclick=()=>answerBid(i);box.appendChild(b)});document.getElementById('biddingResult').textContent='';}
+function answerBid(i){const r=document.getElementById('biddingResult');if(i===curQuiz.a){r.innerHTML=`<span class='ok'>정답</span> - ${curQuiz.why}`;log(`비딩 정답: ${curQuiz.q}`,'ok');}else{r.innerHTML=`<span class='warn'>오답</span> - ${curQuiz.why}`;log(`비딩 오답: ${curQuiz.q}`,'warn');}}
 
-const ranks=['A','K','Q','J','10','9'];
-const suits=['♠','♥','♦','♣'];
-let hand=[],leadSuit='';
-function randomCard(){return suits[Math.floor(Math.random()*4)]+ranks[Math.floor(Math.random()*ranks.length)]}
+function randomCard(){return suits[Math.floor(Math.random()*4)] + ranks[Math.floor(Math.random()*ranks.length)]}
+function rankValue(c){const r=c.slice(1);return ({A:8,K:7,Q:6,J:5,'10':4,'9':3,'8':2,'7':1})[r]||0}
+function updateScore(){document.getElementById('scoreInfo').textContent=`진행: ${trickNo}/${maxTricks} 트릭 · 획득 ${tricksWon}`;}
 function startPracticeRound(){
-  hand=[randomCard(),randomCard(),randomCard(),randomCard(),randomCard()];
-  leadSuit=suits[Math.floor(Math.random()*4)];
-  document.getElementById('westPlay').textContent=leadSuit+'리드';
-  document.getElementById('northPlay').textContent='(더미 대기)';
-  document.getElementById('eastPlay').textContent='(상대 대기)';
-  document.getElementById('southPlay').textContent='카드를 선택하세요';
-  document.getElementById('trickResult').textContent=`현재 트릭 리드 무늬: ${leadSuit}`;
-  renderHand();
-  log(`트릭 연습 시작. 리드 무늬는 ${leadSuit}.`,'ok');
+  trump=document.getElementById('trump').value; const lv=Number(document.getElementById('level').value);
+  target=6+lv; hand=[randomCard(),randomCard(),randomCard(),randomCard(),randomCard(),randomCard()]; tricksWon=0; trickNo=0;
+  document.getElementById('contractInfo').textContent=`계약: ${lv}${trump} · 목표 ${target}트릭`;
+  nextTrick(); renderHand(); updateScore(); log(`새 라운드 시작: ${lv}${trump}`,'ok');
 }
-function renderHand(){
-  const box=document.getElementById('playerHand');
-  box.innerHTML='';
-  hand.forEach((c,idx)=>{
-    const b=document.createElement('button');
-    b.className='cardbtn';
-    b.textContent=c;
-    b.onclick=()=>playCard(idx);
-    box.appendChild(b);
-  });
+function nextTrick(){
+  if(trickNo>=maxTricks){const needed=Math.max(0,target-6);const pass=tricksWon>=needed;document.getElementById('trickResult').innerHTML=pass?`<span class='ok'>연습 성공!</span> 목표(${needed}) 대비 ${tricksWon}트릭 획득`:`<span class='warn'>연습 종료</span> 목표(${needed}) 대비 ${tricksWon}트릭`;log(`라운드 종료: ${tricksWon}/${needed}`,(pass?'ok':'warn'));return}
+  leaderSuit=suits[Math.floor(Math.random()*4)];
+  document.getElementById('westPlay').textContent=`${leaderSuit} 리드`;document.getElementById('northPlay').textContent='대기';document.getElementById('eastPlay').textContent='대기';document.getElementById('southPlay').textContent='카드 선택';
+  document.getElementById('trickResult').textContent=`트릭 ${trickNo+1}: 리드 무늬는 ${leaderSuit}`;
 }
+function renderHand(){const box=document.getElementById('playerHand');box.innerHTML='';hand.forEach((c,i)=>{const b=document.createElement('button');b.className='cardbtn';b.textContent=c;b.onclick=()=>playCard(i);box.appendChild(b)});}
 function playCard(i){
-  const chosen=hand[i];
-  const hasLead=hand.some(c=>c.startsWith(leadSuit));
-  const follows=chosen.startsWith(leadSuit);
-  if(hasLead && !follows){
-    document.getElementById('trickResult').innerHTML="<span class='warn'>규칙 위반!</span> 같은 무늬가 있으면 반드시 따라내야 합니다.";
-    log(`규칙 위반: ${chosen} 선택 (리드 ${leadSuit} 보유 중).`,'warn');
-    return;
-  }
+  if(!hand.length)return; const chosen=hand[i]; const hasLead=hand.some(c=>c.startsWith(leaderSuit)); const follows=chosen.startsWith(leaderSuit);
+  if(hasLead && !follows){document.getElementById('trickResult').innerHTML="<span class='warn'>규칙 위반</span>: 같은 무늬가 있으면 따라내야 합니다.";log(`위반: ${chosen}, 리드 ${leaderSuit} 보유`,'warn');return;}
   document.getElementById('southPlay').textContent=chosen;
-  hand.splice(i,1);
-  renderHand();
-  document.getElementById('trickResult').innerHTML="<span class='ok'>좋아요!</span> 유효한 플레이입니다. 다음 트릭도 반복 연습하세요.";
-  log(`유효한 플레이: ${chosen}.`,'ok');
+  const enemy1=randomCard(),enemy2=randomCard(); document.getElementById('northPlay').textContent=randomCard(); document.getElementById('eastPlay').textContent=enemy1; document.getElementById('westPlay').textContent=enemy2;
+  const southWin = evaluateTrick(chosen,[enemy1,enemy2],leaderSuit,trump);
+  if(southWin){tricksWon++;document.getElementById('trickResult').innerHTML="<span class='ok'>트릭 획득!</span>";log(`트릭 획득: ${chosen}`,'ok');}
+  else{document.getElementById('trickResult').innerHTML="<span class='warn'>트릭 실패</span>";log(`트릭 실패: ${chosen}`,'warn');}
+  hand.splice(i,1); trickNo++; renderHand(); updateScore(); setTimeout(nextTrick,500);
 }
-function resetPractice(){
-  hand=[];leadSuit='';
-  document.getElementById('playerHand').innerHTML='';
-  ['westPlay','northPlay','eastPlay','southPlay'].forEach(id=>document.getElementById(id).textContent='');
-  document.getElementById('trickResult').textContent='연습 라운드를 시작해 주세요.';
-  log('트릭 연습을 초기화했습니다.');
+function evaluateTrick(south,enemies,lead,tr){
+  const cards=[south,...enemies];
+  function power(c){const s=c[0],rv=rankValue(c);if(tr!=='NT' && s===tr) return 100+rv;if(s===lead) return 50+rv;return rv;}
+  return power(south)>=Math.max(...cards.map(power));
 }
+function resetPractice(){hand=[];tricksWon=0;trickNo=0;leaderSuit='';document.getElementById('playerHand').innerHTML='';['westPlay','northPlay','eastPlay','southPlay'].forEach(id=>document.getElementById(id).textContent='');document.getElementById('contractInfo').textContent='계약 미시작';document.getElementById('trickResult').textContent='라운드를 시작해 주세요.';updateScore();}
 
-newBiddingQuiz();
-resetPractice();
-nextLesson();
+newBiddingQuiz();resetPractice();nextLesson();
 </script>
 </body>
 </html>
